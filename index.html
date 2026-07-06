@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mostafa Maher & Mennatullah Mostafa — Wedding</title>
+    <title>Mustafa & Mennatullah — Wedding</title>
     <meta name="description" content="An elegant digital wedding invitation." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -129,6 +129,7 @@
           #0b0906 100%
         );
         transition:
+          transform 1.2s ease,
           opacity 1.2s ease,
           visibility 1.2s;
       }
@@ -136,6 +137,7 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
+        transform: scale(1.06);
       }
       #intro .stars {
         position: absolute;
@@ -218,6 +220,23 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         transition: transform 1s ease 0.5s;
       }
+      .env-letter .letter-names {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 20%;
+        text-align: center;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 0.95rem;
+        color: #8a7455;
+        letter-spacing: 0.04em;
+        opacity: 0;
+        transition: opacity 0.8s ease 0.7s;
+      }
+      .envelope.open .env-letter .letter-names {
+        opacity: 1;
+      }
       .env-letter .lines {
         position: absolute;
         left: 18%;
@@ -253,7 +272,7 @@
         z-index: 1;
       }
       .envelope.open .env-letter {
-        transform: translateY(-46%);
+        transform: translateY(-58%);
       }
       .env-sides {
         position: absolute;
@@ -1297,7 +1316,9 @@
         letter-spacing: 0.04em;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         backdrop-filter: blur(8px);
-        transition: transform 0.3s, background 0.3s;
+        transition:
+          transform 0.3s,
+          background 0.3s;
       }
       #makerBadge:hover {
         transform: translateY(-3px);
@@ -1522,18 +1543,37 @@
       <div class="stars" id="stars"></div>
       <div class="dear" data-i18n="dearGuest">Dear Guest</div>
       <h1 data-i18n="cordially">You are cordially invited</h1>
-      <div class="envelope" id="envelope">
+      <div class="envelope" id="envelope" onclick="openInvitation()">
         <div class="env-body"></div>
         <div class="env-letter">
+          <div class="letter-names" id="letterNames">Mustafa &amp; Mennatullah</div>
           <div class="lines"><i></i><i></i><i></i></div>
         </div>
         <div class="env-sides"></div>
         <div class="env-flap"></div>
         <div class="wax"><span id="sealInitials">M &amp; M</span></div>
       </div>
-      <button id="openBtn" data-i18n="openInvitation">Open Invitation</button>
+      <button id="openBtn" onclick="openInvitation()" data-i18n="openInvitation">Open Invitation</button>
       <div class="hint" data-i18n="clickReveal">Click to reveal</div>
     </div>
+    <script>
+      /* standalone opener — always works, even if the main script has an error */
+      window.__inviteOpened = false;
+      function openInvitation() {
+        if (window.__inviteOpened) return;
+        window.__inviteOpened = true;
+        document.getElementById("envelope").classList.add("open");
+        try {
+          if (typeof startMusic === "function") startMusic();
+        } catch (e) {}
+        setTimeout(function () {
+          document.getElementById("intro").classList.add("closed");
+          document.querySelectorAll("#hero .reveal").forEach(function (el) {
+            el.classList.add("visible");
+          });
+        }, 1600);
+      }
+    </script>
 
     <!-- ================= NAV ================= -->
     <nav id="nav">
@@ -1542,9 +1582,6 @@
       </button>
       <div class="links">
         <a class="nl" href="#journey" data-i18n="navJourney">Journey</a>
-        <a class="nl" href="#milestones" data-i18n="navMilestones"
-          >Milestones</a
-        >
         <a class="nl" href="#details" data-i18n="navWhen">When &amp; Where</a>
         <a class="nl" href="#moments" data-i18n="navMoments">Moments</a>
       </div>
@@ -1560,7 +1597,6 @@
     </nav>
     <div id="mobileMenu">
       <a href="#journey" data-i18n="navJourney">Journey</a>
-      <a href="#milestones" data-i18n="navMilestones">Milestones</a>
       <a href="#details" data-i18n="navWhen">When &amp; Where</a>
       <a href="#moments" data-i18n="navMoments">Moments</a>
       <button class="btn-attend" onclick="openRsvp()" data-i18n="willAttend">
@@ -1577,8 +1613,13 @@
           You Are Invited To
         </div>
         <h1 class="reveal d1">
-          <span class="ln"><span id="heroName1">Mostafa Maher</span> <span class="amp">&amp;</span></span>
-          <span class="ln"><span id="heroName2">Mennatullah Mostafa</span></span>
+          <span class="ln"
+            ><span id="heroName1">Mustafa</span>
+            <span class="amp">&amp;</span></span
+          >
+          <span class="ln"
+            ><span id="heroName2">Mennatullah</span></span
+          >
         </h1>
         <div class="wedding reveal d2" data-i18n="wedding">Wedding</div>
         <p class="msg reveal d2" data-i18n="heroMsg">
@@ -1664,112 +1705,6 @@
             didn't just grow up together. We grew into each other. She is not
             simply the love of my life. She is the story that began long before
             I understood what love was, and the story I hope will last forever.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= MILESTONES ================= -->
-    <section id="milestones" class="block dark-sec">
-      <div class="sec-head">
-        <div class="label label-line reveal" data-i18n="loveStory">
-          Love Story
-        </div>
-        <h2 class="reveal d1">
-          <span data-i18n="milestonesTitle1">Milestones of</span>
-          <span class="gold" data-i18n="milestonesTitle2">Love</span>
-        </h2>
-        <p class="sub reveal d2" data-i18n="milestonesSub">
-          A journey through the moments that defined us, leading up to this
-          beautiful celebration of our union.
-        </p>
-      </div>
-      <div class="grid">
-        <div class="mile reveal">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
-              <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
-              <line x1="6" y1="2" x2="6" y2="4" />
-              <line x1="10" y1="2" x2="10" y2="4" />
-              <line x1="14" y1="2" x2="14" y2="4" />
-            </svg>
-          </div>
-          <div class="stem"></div>
-          <div class="num">01</div>
-          <h3 data-i18n="m1t">By the Mediterranean Shore</h3>
-          <p data-i18n="m1p">
-            It began where the sea breeze carries whispers — on the corniche of
-            Alexandria, a city where love stories are written between the waves
-            and the golden horizon. One glance, and the sea stood still.
-          </p>
-        </div>
-        <div class="mile reveal d1">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="2" y1="12" x2="22" y2="12" />
-              <path
-                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-              />
-            </svg>
-          </div>
-          <div class="stem"></div>
-          <div class="num">02</div>
-          <h3 data-i18n="m2t">Wandering Together</h3>
-          <p data-i18n="m2p">
-            From strolling through the ancient libraries and hidden gems of
-            Iskandariya to chasing sunsets beyond the harbor lighthouse, every
-            adventure deepened the bond that Alexandria quietly blessed.
-          </p>
-        </div>
-        <div class="mile reveal d2">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path
-                d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"
-              />
-            </svg>
-          </div>
-          <div class="stem"></div>
-          <div class="num">03</div>
-          <h3 data-i18n="m3t">A Proposal at Dusk</h3>
-          <p data-i18n="m3p">
-            As the Mediterranean turned crimson and the salt air softened the
-            evening, Mostafa dropped to one knee. Mennatullah's "yes" echoed
-            across the water, carried by the same breeze that first brought them
-            together.
-          </p>
-        </div>
-        <div class="mile reveal d3">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24">
-              <path d="M5.8 11.3 2 22l10.7-3.79" />
-              <path d="M4 3h.01" />
-              <path d="M22 8h.01" />
-              <path d="M15 2h.01" />
-              <path d="M22 20h.01" />
-              <path
-                d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"
-              />
-              <path
-                d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"
-              />
-              <path
-                d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"
-              />
-              <path
-                d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"
-              />
-            </svg>
-          </div>
-          <div class="stem"></div>
-          <div class="num">04</div>
-          <h3 data-i18n="m4t">Forever Begins Here</h3>
-          <p data-i18n="m4p">
-            In the city that witnessed it all — the first hello, the quiet
-            walks, and the unforgettable proposal — we now invite you to
-            celebrate as Alexandria embraces one more beautiful love story.
           </p>
         </div>
       </div>
@@ -1917,7 +1852,7 @@
       </h2>
       <div class="rule reveal d2"></div>
       <div class="names reveal d2" id="footerNames">
-        Mostafa Maher &amp; Mennatullah Mostafa
+        Mustafa &amp; Mennatullah
       </div>
       <div class="when reveal d3" data-i18n="footerWhen">
         July 25, 2026 · Kafr El-Dawwar
@@ -1966,7 +1901,14 @@
         </div>
         <div class="rsvp-field" id="guestField" style="display: none">
           <label data-i18n="guestsLabel">Number of Guests</label>
-          <input type="number" id="rsvpGuests" min="1" max="20" value="1" style="max-width: 120px" />
+          <input
+            type="number"
+            id="rsvpGuests"
+            min="1"
+            max="20"
+            value="1"
+            style="max-width: 120px"
+          />
         </div>
         <div class="rsvp-field">
           <label data-i18n="noteLabel">A Note for the Couple</label>
@@ -1991,7 +1933,9 @@
           </div>
           <h3 data-i18n="thanksTitle">Thank You</h3>
           <p data-i18n="thanksMsg">We can't wait to celebrate with you!</p>
-          <button class="lnk-close" onclick="closeRsvp()" data-i18n="closeBtn">Close</button>
+          <button class="lnk-close" onclick="closeRsvp()" data-i18n="closeBtn">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -2027,7 +1971,7 @@
         localAudioFile: "", // ← OR put an mp3 in this folder and write its name here, e.g. "music.mp3" (used instead of YouTube)
         weddingDateISO: "2026-07-25T19:30:00", // ← countdown target
         phone: "01063035683",
-        rsvpEmail: "muhammedatef57@gmail.com", // ← RSVP popup sends responses here
+        rsvpEmail: "MustafaMaher7sn@gmail.com", // ← RSVP popup sends responses here
         mapUrl: "https://maps.app.goo.gl/zNFo8PJjjQLY76fW7", // ← Google Maps share link
         moments: [
           // ← photos live in the /photos folder
@@ -2189,6 +2133,7 @@
           thanksMsg: "We can't wait to celebrate with you!",
           closeBtn: "Close",
           badgeText: "Love it? Get yours",
+          letterNames: "Mustafa & Mennatullah",
           waAccept: "joyfully accepts the invitation",
           waDecline: "regretfully declines the invitation",
           gallery: "Gallery",
@@ -2204,9 +2149,9 @@
           langBtn: "عربي",
           logo: "M <span class='amp'>&</span> M",
           seal: "M & M",
-          heroName1: "Mostafa Maher",
-          heroName2: "Mennatullah Mostafa",
-          footerNames: "Mostafa Maher & Mennatullah Mostafa",
+          heroName1: "Mustafa",
+          heroName2: "Mennatullah",
+          footerNames: "Mustafa & Mennatullah",
         },
         ar: {
           dearGuest: "ضيفنا العزيز",
@@ -2279,6 +2224,7 @@
           thanksMsg: "لا نطيق صبرًا حتى نحتفل معكم!",
           closeBtn: "إغلاق",
           badgeText: "عجبتك؟ اطلب دعوتك",
+          letterNames: "مصطفى & منة الله",
           waAccept: "يسعده الحضور وتلبية الدعوة",
           waDecline: "يعتذر عن حضور الحفل",
           gallery: "معرض الصور",
@@ -2294,9 +2240,9 @@
           langBtn: "English",
           logo: "م <span class='amp'>&</span> م",
           seal: "م & م",
-          heroName1: "مصطفى ماهر",
-          heroName2: "منة الله مصطفى",
-          footerNames: "مصطفى ماهر & منة الله مصطفى",
+          heroName1: "مصطفى",
+          heroName2: "منة الله",
+          footerNames: "مصطفى & منة الله",
         },
       };
 
@@ -2312,25 +2258,7 @@
         s.style.animationDelay = Math.random() * 4 + "s";
         stars.appendChild(s);
       }
-      let opened = false;
-      function openInvitation() {
-        if (opened) return;
-        opened = true;
-        document.getElementById("envelope").classList.add("open");
-        startMusic();
-        setTimeout(() => {
-          document.getElementById("intro").classList.add("closed");
-          document
-            .querySelectorAll("#hero .reveal")
-            .forEach((el) => el.classList.add("visible"));
-        }, 1100);
-      }
-      document
-        .getElementById("envelope")
-        .addEventListener("click", openInvitation);
-      document
-        .getElementById("openBtn")
-        .addEventListener("click", openInvitation);
+      /* envelope opening is handled by the standalone script near the intro */
 
       /* ============================================================
    NAV scroll state
@@ -2407,7 +2335,9 @@
           _captcha: "false",
           Name: name,
           Response:
-            rsvpChoice === "accept" ? "Joyfully Accept ✓" : "Regretfully Decline ✗",
+            rsvpChoice === "accept"
+              ? "Joyfully Accept ✓"
+              : "Regretfully Decline ✗",
           Note: note || "-",
         };
         if (rsvpChoice === "accept") payload["Number of Guests"] = guests;
@@ -2514,6 +2444,7 @@
         document.getElementById("langBtn").textContent = t.langBtn;
         document.getElementById("logoText").innerHTML = t.logo;
         document.getElementById("sealInitials").textContent = t.seal;
+        document.getElementById("letterNames").textContent = t.letterNames;
         document.getElementById("heroName1").textContent = t.heroName1;
         document.getElementById("heroName2").textContent = t.heroName2;
         document.getElementById("footerNames").innerHTML = t.footerNames;
@@ -2560,7 +2491,7 @@
             events: {
               onReady: () => {
                 ytReady = true;
-                if (opened) startMusic();
+                if (window.__inviteOpened) startMusic();
               },
               onStateChange: (e) => {
                 playing = e.data === YT.PlayerState.PLAYING;
