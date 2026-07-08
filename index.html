@@ -143,6 +143,7 @@
         position: absolute;
         inset: 0;
         overflow: hidden;
+        pointer-events: none;
       }
       #intro .star {
         position: absolute;
@@ -329,6 +330,8 @@
         transform: translate(-50%, -50%) scale(0.6);
       }
       #openBtn {
+        position: relative;
+        z-index: 5;
         margin-top: 3.2rem;
         padding: 1rem 2.6rem;
         background: transparent;
