@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
       /* ============================================================
    THEME — colors copied from the reference site
@@ -1549,14 +1550,22 @@
       <div class="envelope" id="envelope" onclick="openInvitation()">
         <div class="env-body"></div>
         <div class="env-letter">
-          <div class="letter-names" id="letterNames">Mustafa &amp; Mennatullah</div>
+          <div class="letter-names" id="letterNames">
+            Mustafa &amp; Mennatullah
+          </div>
           <div class="lines"><i></i><i></i><i></i></div>
         </div>
         <div class="env-sides"></div>
         <div class="env-flap"></div>
         <div class="wax"><span id="sealInitials">M &amp; M</span></div>
       </div>
-      <button id="openBtn" onclick="openInvitation()" data-i18n="openInvitation">Open Invitation</button>
+      <button
+        id="openBtn"
+        onclick="openInvitation()"
+        data-i18n="openInvitation"
+      >
+        Open Invitation
+      </button>
       <div class="hint" data-i18n="clickReveal">Click to reveal</div>
     </div>
     <script>
@@ -1620,9 +1629,7 @@
             ><span id="heroName1">Mustafa</span>
             <span class="amp">&amp;</span></span
           >
-          <span class="ln"
-            ><span id="heroName2">Mennatullah</span></span
-          >
+          <span class="ln"><span id="heroName2">Mennatullah</span></span>
         </h1>
         <div class="wedding reveal d2" data-i18n="wedding">Wedding</div>
         <p class="msg reveal d2" data-i18n="heroMsg">
@@ -1974,7 +1981,11 @@
         localAudioFile: "", // ← OR put an mp3 in this folder and write its name here, e.g. "music.mp3" (used instead of YouTube)
         weddingDateISO: "2026-07-25T19:30:00", // ← countdown target
         phone: "01063035683",
-        rsvpEmail: "MustafaMaher7sn@gmail.com", // ← RSVP popup sends responses here
+        rsvpEmail: "MustafaMaher7sn@gmail.com", // ← used only as fallback (opens email app)
+        // EmailJS settings — get these from https://dashboard.emailjs.com
+        emailjsPublicKey: "OTDHuwI-BbAxJb5WE", //   Account → General → Public Key
+        emailjsServiceId: "service_5cuhhaj", //   Email Services → your Gmail service
+        emailjsTemplateId: "template_45klgh6", // Email Templates → your template
         mapUrl: "https://maps.app.goo.gl/zNFo8PJjjQLY76fW7", // ← Google Maps share link
         moments: [
           // ← photos live in the /photos folder
@@ -2332,38 +2343,40 @@
         const btn = document.getElementById("rsvpSend");
         btn.disabled = true;
         btn.innerHTML = t.sending;
-        const payload = {
-          _subject: `Wedding RSVP — ${name}`,
-          _template: "table",
-          _captcha: "false",
-          Name: name,
-          Response:
+        const params = {
+          to_email: CONFIG.rsvpEmail,
+          name: name,
+          response:
             rsvpChoice === "accept"
               ? "Joyfully Accept ✓"
               : "Regretfully Decline ✗",
-          Note: note || "-",
+          guests: rsvpChoice === "accept" ? guests : "-",
+          note: note || "-",
         };
-        if (rsvpChoice === "accept") payload["Number of Guests"] = guests;
         try {
-          const r = await fetch(
-            "https://formsubmit.co/ajax/" + CONFIG.rsvpEmail,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify(payload),
-            },
+          if (
+            typeof emailjs === "undefined" ||
+            CONFIG.emailjsPublicKey === "YOUR_PUBLIC_KEY"
+          )
+            throw new Error("emailjs not configured");
+          await emailjs.send(
+            CONFIG.emailjsServiceId,
+            CONFIG.emailjsTemplateId,
+            params,
+            { publicKey: CONFIG.emailjsPublicKey },
           );
-          if (!r.ok) throw new Error("send failed");
           document.querySelector(".rsvp-box").classList.add("done");
         } catch (e) {
-          // fallback: open email app if silent send is unavailable
+          // fallback: send via WhatsApp if EmailJS fails or quota is used up
           const resp = rsvpChoice === "accept" ? t.waAccept : t.waDecline;
-          let body = `${name} ${resp}. (${guests})`;
-          if (note) body += `\n\n"${note}"`;
-          location.href = `mailto:${CONFIG.rsvpEmail}?subject=${encodeURIComponent(`Wedding RSVP — ${name}`)}&body=${encodeURIComponent(body)}`;
+          let msg = `RSVP — ${name} ${resp}.`;
+          if (rsvpChoice === "accept") msg += `\n${t.guestsLabel}: ${guests}`;
+          if (note) msg += `\n"${note}"`;
+          const intl = "2" + CONFIG.phone.replace(/^0/, ""); // Egypt code
+          window.open(
+            `https://wa.me/${intl}?text=${encodeURIComponent(msg)}`,
+            "_blank",
+          );
           document.querySelector(".rsvp-box").classList.add("done");
         }
         btn.disabled = false;
